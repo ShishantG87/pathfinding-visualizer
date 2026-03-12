@@ -5,6 +5,8 @@ GREY = (200,200,200)
 BLACK = (0,0,0)
 GREEN = (0,255,0)
 RED = (255,0,0)
+BLUE = (0,0,255)
+YELLOW = (255,255,0)
 
 
 class Node:
@@ -16,7 +18,14 @@ class Node:
         self.y = row * width
         self.color = WHITE
         self.width = width
-        
+        self.neighbors = []
+
+    def make_visited(self):
+        self.color = BLUE
+
+    def make_path(self):
+        self.color = YELLOW
+
     def is_start(self):
         return self.color == GREEN
 
@@ -40,6 +49,22 @@ class Node:
 
     def draw(self, win):
         pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.width))
+
+    def update_neighbors(self, grid):
+
+        self.neighbors = []
+
+        if self.row < len(grid) - 1 and not grid[self.row + 1][self.col].is_wall():
+            self.neighbors.append(grid[self.row + 1][self.col])
+
+        if self.row > 0 and not grid[self.row - 1][self.col].is_wall():
+            self.neighbors.append(grid[self.row - 1][self.col])
+
+        if self.col < len(grid) - 1 and not grid[self.row][self.col + 1].is_wall():
+            self.neighbors.append(grid[self.row][self.col + 1])
+
+        if self.col > 0 and not grid[self.row][self.col - 1].is_wall():
+            self.neighbors.append(grid[self.row][self.col - 1])
 
 
 def make_grid(rows, width):

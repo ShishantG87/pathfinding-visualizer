@@ -1,5 +1,6 @@
 import pygame
 from grid import make_grid, draw, get_clicked_pos
+from algorithms import bfs, reconstruct_path
 
 WIDTH = 800
 ROWS = 40
@@ -33,6 +34,9 @@ def main():
                 pos = pygame.mouse.get_pos()
                 row, col = get_clicked_pos(pos, ROWS, WIDTH)
 
+                if row >= ROWS or col >= ROWS:
+                    continue
+
                 node = grid[row][col]
 
                 if not start and node != end:
@@ -52,6 +56,9 @@ def main():
                 pos = pygame.mouse.get_pos()
                 row, col = get_clicked_pos(pos, ROWS, WIDTH)
 
+                if row >= ROWS or col >= ROWS:
+                    continue
+
                 node = grid[row][col]
                 node.reset()
 
@@ -60,6 +67,29 @@ def main():
 
                 if node == end:
                     end = None
+
+            # RUN BFS
+            if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_SPACE and start and end:
+
+                    for row in grid:
+                        for node in row:
+                            node.update_neighbors(grid)
+
+                    found, came_from = bfs(
+                        lambda: draw(WIN, grid, ROWS, WIDTH),
+                        grid,
+                        start,
+                        end
+                    )
+
+                    if found:
+                        reconstruct_path(
+                            came_from,
+                            end,
+                            lambda: draw(WIN, grid, ROWS, WIDTH)
+                        )
 
     pygame.quit()
 
