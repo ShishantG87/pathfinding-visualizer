@@ -90,6 +90,10 @@ def main():
                             end,
                             lambda: draw(WIN, grid, ROWS, WIDTH)
                         )
+                if event.key == pygame.K_c:
+                    start = None
+                    end = None
+                    grid = make_grid(ROWS, WIDTH)
 
     pygame.quit()
 
