@@ -1,6 +1,6 @@
 import pygame
 from grid import make_grid, draw, get_clicked_pos
-from algorithms import bfs, reconstruct_path
+from algorithms import bfs, reconstruct_path, astar
 
 WIDTH = 800
 ROWS = 40
@@ -70,6 +70,25 @@ def main():
 
             # RUN BFS
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_a and start and end:
+
+                    for row in grid:
+                        for node in row:
+                            node.update_neighbors(grid)
+
+                    found, came_from = astar(
+                        lambda: draw(WIN, grid, ROWS, WIDTH),
+                        grid,
+                        start,
+                        end
+                    )
+
+                    if found:
+                        reconstruct_path(
+                            came_from,
+                            end,
+                            lambda: draw(WIN, grid, ROWS, WIDTH)
+                        )
 
                 if event.key == pygame.K_SPACE and start and end:
 
