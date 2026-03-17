@@ -1,4 +1,5 @@
 import pygame
+import random
 from grid import make_grid, draw, get_clicked_pos
 from algorithms import bfs, reconstruct_path, astar
 
@@ -7,6 +8,14 @@ ROWS = 40
 
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
 pygame.display.set_caption("Pathfinding Visualizer")
+
+
+def generate_maze(grid, density=0.3):
+
+    for row in grid:
+        for node in row:
+            if random.random() < density:
+                node.make_wall()
 
 
 def main():
@@ -68,8 +77,9 @@ def main():
                 if node == end:
                     end = None
 
-            # RUN BFS
+            # KEY CONTROLS
             if event.type == pygame.KEYDOWN:
+
                 if event.key == pygame.K_a and start and end:
 
                     for row in grid:
@@ -109,10 +119,17 @@ def main():
                             end,
                             lambda: draw(WIN, grid, ROWS, WIDTH)
                         )
+
                 if event.key == pygame.K_c:
                     start = None
                     end = None
                     grid = make_grid(ROWS, WIDTH)
+
+                if event.key == pygame.K_m:
+                    start = None
+                    end = None
+                    grid = make_grid(ROWS, WIDTH)
+                    generate_maze(grid)
 
     pygame.quit()
 
