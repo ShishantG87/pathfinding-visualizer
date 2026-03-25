@@ -1,7 +1,7 @@
 import pygame
 import random
 from grid import make_grid, draw, get_clicked_pos
-from algorithms import bfs, reconstruct_path, astar
+from algorithms import bfs, reconstruct_path, astar, dijkstra
 
 WIDTH = 800
 ROWS = 40
@@ -56,6 +56,9 @@ def main():
                     end = node
                     end.make_end()
 
+                elif pygame.key.get_pressed()[pygame.K_w] and node != start and node != end:
+                    node.make_weight()   # hold W + click
+
                 elif node != start and node != end:
                     node.make_wall()
 
@@ -80,6 +83,7 @@ def main():
             # KEY CONTROLS
             if event.type == pygame.KEYDOWN:
 
+                # A* Algorithm
                 if event.key == pygame.K_a and start and end:
 
                     for row in grid:
@@ -100,6 +104,7 @@ def main():
                             lambda: draw(WIN, grid, ROWS, WIDTH)
                         )
 
+                # BFS Algorithm
                 if event.key == pygame.K_SPACE and start and end:
 
                     for row in grid:
@@ -120,11 +125,34 @@ def main():
                             lambda: draw(WIN, grid, ROWS, WIDTH)
                         )
 
+                # Dijkstra Algorithm
+                if event.key == pygame.K_d and start and end:
+
+                    for row in grid:
+                        for node in row:
+                            node.update_neighbors(grid)
+
+                    found, came_from = dijkstra(
+                        lambda: draw(WIN, grid, ROWS, WIDTH),
+                        grid,
+                        start,
+                        end
+                    )
+
+                    if found:
+                        reconstruct_path(
+                            came_from,
+                            end,
+                            lambda: draw(WIN, grid, ROWS, WIDTH)
+                        )
+
+                # Clear Grid
                 if event.key == pygame.K_c:
                     start = None
                     end = None
                     grid = make_grid(ROWS, WIDTH)
 
+                # Generate Maze
                 if event.key == pygame.K_m:
                     start = None
                     end = None

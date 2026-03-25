@@ -9,6 +9,7 @@ def h(p1, p2):
     return abs(x1 - x2) + abs(y1 - y2)
 
 
+# -------- BFS --------
 def bfs(draw, grid, start, end):
 
     queue = deque([start])
@@ -18,7 +19,6 @@ def bfs(draw, grid, start, end):
 
     while queue:
 
-       
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -44,6 +44,7 @@ def bfs(draw, grid, start, end):
     return False, came_from
 
 
+# -------- A* --------
 def astar(draw, grid, start, end):
 
     count = 0
@@ -62,7 +63,6 @@ def astar(draw, grid, start, end):
 
     while not open_set.empty():
 
-        # allow window to close during algorithm
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -75,7 +75,7 @@ def astar(draw, grid, start, end):
 
         for neighbor in current.neighbors:
 
-            temp_g = g_score[current] + 1
+            temp_g = g_score[current] + neighbor.weight  # ✅ USE WEIGHT
 
             if temp_g < g_score[neighbor]:
 
@@ -101,6 +101,57 @@ def astar(draw, grid, start, end):
     return False, came_from
 
 
+# -------- DIJKSTRA --------
+def dijkstra(draw, grid, start, end):
+
+    count = 0
+    pq = PriorityQueue()
+    pq.put((0, count, start))
+
+    came_from = {}
+
+    dist = {node: float("inf") for row in grid for node in row}
+    dist[start] = 0
+
+    visited = set()
+
+    while not pq.empty():
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+        current = pq.get()[2]
+
+        if current in visited:
+            continue
+
+        visited.add(current)
+
+        if current == end:
+            return True, came_from
+
+        for neighbor in current.neighbors:
+
+            new_dist = dist[current] + neighbor.weight  # ✅ USE WEIGHT
+
+            if new_dist < dist[neighbor]:
+
+                dist[neighbor] = new_dist
+                came_from[neighbor] = current
+
+                count += 1
+                pq.put((dist[neighbor], count, neighbor))
+
+                neighbor.make_visited()
+
+        pygame.time.delay(10)
+        draw()
+
+    return False, came_from
+
+
+# -------- PATH --------
 def reconstruct_path(came_from, end, draw):
 
     current = end
