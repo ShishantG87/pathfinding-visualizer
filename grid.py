@@ -7,7 +7,7 @@ GREEN = (0,255,0)
 RED = (255,0,0)
 BLUE = (0,0,255)
 YELLOW = (255,255,0)
-PURPLE = (128,0,128)  # weighted node
+PURPLE = (128,0,128)
 
 
 class Node:
@@ -20,7 +20,7 @@ class Node:
         self.color = WHITE
         self.width = width
         self.neighbors = []
-        self.weight = 1  # default cost
+        self.weight = 1
 
     def make_visited(self):
         self.color = BLUE
@@ -61,17 +61,21 @@ class Node:
 
         self.neighbors = []
 
-        if self.row < len(grid) - 1 and not grid[self.row + 1][self.col].is_wall():
-            self.neighbors.append(grid[self.row + 1][self.col])
+        rows = len(grid)
 
-        if self.row > 0 and not grid[self.row - 1][self.col].is_wall():
-            self.neighbors.append(grid[self.row - 1][self.col])
+        # 4 directions
+        directions = [
+            (1,0), (-1,0), (0,1), (0,-1),
+            (1,1), (1,-1), (-1,1), (-1,-1)  # diagonals
+        ]
 
-        if self.col < len(grid) - 1 and not grid[self.row][self.col + 1].is_wall():
-            self.neighbors.append(grid[self.row][self.col + 1])
+        for dr, dc in directions:
+            r = self.row + dr
+            c = self.col + dc
 
-        if self.col > 0 and not grid[self.row][self.col - 1].is_wall():
-            self.neighbors.append(grid[self.row][self.col - 1])
+            if 0 <= r < rows and 0 <= c < rows:
+                if not grid[r][c].is_wall():
+                    self.neighbors.append(grid[r][c])
 
 
 def make_grid(rows, width):
