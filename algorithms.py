@@ -2,11 +2,17 @@ import pygame
 from collections import deque
 from queue import PriorityQueue
 
+SPEED = 10  # global speed (lower = faster)
+
 
 def h(p1, p2):
     x1, y1 = p1
     x2, y2 = p2
     return abs(x1 - x2) + abs(y1 - y2)
+
+
+def delay():
+    pygame.time.delay(SPEED)
 
 
 # -------- BFS --------
@@ -38,7 +44,7 @@ def bfs(draw, grid, start, end):
 
                 neighbor.make_visited()
 
-        pygame.time.delay(10)
+        delay()
         draw()
 
     return False, came_from
@@ -75,7 +81,7 @@ def astar(draw, grid, start, end):
 
         for neighbor in current.neighbors:
 
-            temp_g = g_score[current] + neighbor.weight  # ✅ USE WEIGHT
+            temp_g = g_score[current] + neighbor.weight
 
             if temp_g < g_score[neighbor]:
 
@@ -95,7 +101,7 @@ def astar(draw, grid, start, end):
 
                     neighbor.make_visited()
 
-        pygame.time.delay(10)
+        delay()
         draw()
 
     return False, came_from
@@ -133,7 +139,7 @@ def dijkstra(draw, grid, start, end):
 
         for neighbor in current.neighbors:
 
-            new_dist = dist[current] + neighbor.weight  # ✅ USE WEIGHT
+            new_dist = dist[current] + neighbor.weight
 
             if new_dist < dist[neighbor]:
 
@@ -145,7 +151,7 @@ def dijkstra(draw, grid, start, end):
 
                 neighbor.make_visited()
 
-        pygame.time.delay(10)
+        delay()
         draw()
 
     return False, came_from
