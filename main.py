@@ -10,10 +10,8 @@ ROWS = 40
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
 pygame.display.set_caption("Pathfinding Visualizer")
 
-FONT = pygame.font.SysFont("arial", 18)
 
-
-def draw_text(win):
+def draw_text(win, FONT):
     text = "A=A* | SPACE=BFS | D=Dijkstra | W+Click=Weight | C=Clear | M=Maze | ↑↓ Speed"
     label = FONT.render(text, True, (0, 0, 0))
     win.blit(label, (10, 10))
@@ -29,6 +27,7 @@ def generate_maze(grid, density=0.3):
 def main():
 
     pygame.init()
+    FONT = pygame.font.SysFont("arial", 18)
 
     grid = make_grid(ROWS, WIDTH)
 
@@ -39,8 +38,8 @@ def main():
     while running:
 
         draw(WIN, grid, ROWS, WIDTH)
-        draw_text(WIN)
-        pygame.display.update()
+        draw_text(WIN, FONT)
+        pygame.display.update()  # ✅ ONLY update here
 
         for event in pygame.event.get():
 

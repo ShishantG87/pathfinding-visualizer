@@ -2,7 +2,7 @@ import pygame
 from collections import deque
 from queue import PriorityQueue
 
-SPEED = 10  # global speed (lower = faster)
+SPEED = 10
 
 
 def h(p1, p2):
@@ -15,19 +15,29 @@ def delay():
     pygame.time.delay(SPEED)
 
 
+def handle_algorithm_events():
+    global SPEED
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP and SPEED > 1:
+                SPEED -= 2
+            elif event.key == pygame.K_DOWN:
+                SPEED += 2
+
+
 # -------- BFS --------
 def bfs(draw, grid, start, end):
 
     queue = deque([start])
     came_from = {}
-
     visited = {start}
 
     while queue:
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
+        handle_algorithm_events()
 
         current = queue.popleft()
 
@@ -35,17 +45,15 @@ def bfs(draw, grid, start, end):
             return True, came_from
 
         for neighbor in current.neighbors:
-
             if neighbor not in visited:
-
                 visited.add(neighbor)
                 came_from[neighbor] = current
                 queue.append(neighbor)
-
                 neighbor.make_visited()
 
         delay()
         draw()
+        pygame.display.update()
 
     return False, came_from
 
@@ -69,9 +77,7 @@ def astar(draw, grid, start, end):
 
     while not open_set.empty():
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
+        handle_algorithm_events()
 
         current = open_set.get()[2]
         open_set_hash.remove(current)
@@ -80,29 +86,25 @@ def astar(draw, grid, start, end):
             return True, came_from
 
         for neighbor in current.neighbors:
-
             temp_g = g_score[current] + neighbor.weight
 
             if temp_g < g_score[neighbor]:
-
                 came_from[neighbor] = current
                 g_score[neighbor] = temp_g
-
                 f_score[neighbor] = temp_g + h(
                     (neighbor.row, neighbor.col),
                     (end.row, end.col)
                 )
 
                 if neighbor not in open_set_hash:
-
                     count += 1
                     open_set.put((f_score[neighbor], count, neighbor))
                     open_set_hash.add(neighbor)
-
                     neighbor.make_visited()
 
         delay()
         draw()
+        pygame.display.update()
 
     return False, came_from
 
@@ -123,9 +125,7 @@ def dijkstra(draw, grid, start, end):
 
     while not pq.empty():
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
+        handle_algorithm_events()
 
         current = pq.get()[2]
 
@@ -138,21 +138,19 @@ def dijkstra(draw, grid, start, end):
             return True, came_from
 
         for neighbor in current.neighbors:
-
             new_dist = dist[current] + neighbor.weight
 
             if new_dist < dist[neighbor]:
-
                 dist[neighbor] = new_dist
                 came_from[neighbor] = current
 
                 count += 1
                 pq.put((dist[neighbor], count, neighbor))
-
                 neighbor.make_visited()
 
         delay()
         draw()
+        pygame.display.update()
 
     return False, came_from
 
@@ -163,7 +161,11 @@ def reconstruct_path(came_from, end, draw):
     current = end
 
     while current in came_from:
+        handle_algorithm_events()
 
         current = came_from[current]
         current.make_path()
+
+        delay()
         draw()
+        pygame.display.update()

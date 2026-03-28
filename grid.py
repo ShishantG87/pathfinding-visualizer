@@ -63,10 +63,9 @@ class Node:
 
         rows = len(grid)
 
-        # 4 directions
         directions = [
             (1,0), (-1,0), (0,1), (0,-1),
-            (1,1), (1,-1), (-1,1), (-1,-1)  # diagonals
+            (1,1), (1,-1), (-1,1), (-1,-1)
         ]
 
         for dr, dc in directions:
@@ -110,7 +109,6 @@ def draw(win, grid, rows, width):
             node.draw(win)
 
     draw_grid(win, rows, width)
-    pygame.display.update()
 
 
 def get_clicked_pos(pos, rows, width):
